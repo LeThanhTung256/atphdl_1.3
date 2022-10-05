@@ -17,15 +17,13 @@ char* encryptBlock(char* data, int len) {
   srand(time(NULL));
 
   //B1: Tăng byte thứ hai lên và giảm byte thứ 3 đi n giá trị (với n là giá trị của byte số 1);
-  // char* temp = new char[len];
-  // for (int i = 0; i < len; i++) {
-  //   if (i % 3 == 1) {
-  //     temp[i] = char((data[i] + data[i - 1]) % 256);
-  //     cout << temp[i] <<endl;
-  //   } else if (i % 3 == 2) {
-  //     temp[i] = abs(data[i] - data[i - 2]);
-  //   }
-  // }
+  for (int i = 0; i < len; i++) {
+    if (i % 3 == 1) {
+      data[i] = char((data[i] + data[i - 1]) % 256);
+    } else if (i % 3 == 2) {
+      data[i] = char((data[i] - data[i - 2] + 256) % 256);
+    }
+  }
 
   //B2: Đổi chỗ byte 1 với byte 3, thêm rác ở byte 4
   for (int i = 0; i < len / 3; i++) {
@@ -56,7 +54,7 @@ char* decryptBlock(char* data, int len) {
   char* decryptedBlock = new char[lenOfDecry];
 
   // B1: Xor với hash của pashwork
-  
+
   // B2: Đổi chỗ byte 1 và 3, xoá byte 4
   for (int i = 0; i < len / 4; i++) {
     decryptedBlock[i * 3] = data[i * 4 + 2];
@@ -72,23 +70,31 @@ char* decryptBlock(char* data, int len) {
     }
   }
 
-  // B3: tăng giảm các byte 2 và 3
+  // B3: Giảm byte 2 và tăng byte 3 lên byte 1 giá trị
+  for (int i = 0; i < lenOfDecry; i++) {
+    if (i % 3 == 1) {
+      decryptedBlock[i] = char((decryptedBlock[i] - decryptedBlock[i - 1] + 256) % 256);
+    } else if (i % 3 == 2) {
+      decryptedBlock[i] = char((decryptedBlock[i] + decryptedBlock[i - 2]) % 256);
+    }
+  }
 
   return decryptedBlock;
 }
 
-int encryption() {
+int encryption(char* fileInName, char* fileOutName) {
   //Nhâp tên file muốn mã hoá
-  const size_t BUFFER_SIZE = 1024;
-  char *inputFileName = new char[BUFFER_SIZE];
-  cout << "Filename: ";
-  cin >> inputFileName;
+  // const size_t BUFFER_SIZE = 1024;
+  // char *inputFileName = new char[BUFFER_SIZE];
+  // cout << "Filename: ";
+  // cin >> inputFileName;
+  cout << "File cần mã hoá: " << fileInName << endl;
+  cout << "File kết quả: " << fileOutName << endl;
   
   //Mở file đọc và file ghi
   fstream fileIn, fileOut;
-  fileIn.open(inputFileName, ios::in | ios::binary);
-  fileOut.open(encryptedFile, ios::out);
-  delete [] inputFileName;
+  fileIn.open(fileInName, ios::in | ios::binary);
+  fileOut.open(fileOutName, ios::out);
 
   if (!fileIn) {
     cerr << "Error: file not opened" << endl;
@@ -125,21 +131,25 @@ int encryption() {
 
   fileIn.close();
   fileOut.close();
+  cout << "Mã hoá thành công!" << endl;
+
   return 1;
 }
 
-int decryption() {
+int decryption(char* fileInName, char* fileOutName) {
   //Nhâp tên file muốn giải mã
-  const size_t BUFFER_SIZE = 1024;
-  char *inputFileName = new char[BUFFER_SIZE];
-  cout << "Filename: ";
-  cin >> inputFileName;
+  // const size_t BUFFER_SIZE = 1024;
+  // char *inputFileName = new char[BUFFER_SIZE];
+  // cout << "Filename: ";
+  // cin >> inputFileName;
+
+  cout << "File cần giải mã: " << fileInName << endl;
+  cout << "File kết quả: " << fileOutName << endl;
   
   //Mở file đọc và file ghi
   fstream fileIn, fileOut;
-  fileIn.open(inputFileName, ios::in | ios::binary);
-  fileOut.open(decryptedFile, ios::out);
-  delete [] inputFileName;
+  fileIn.open(fileInName, ios::in | ios::binary);
+  fileOut.open(fileOutName, ios::out);
 
   if (!fileIn) {
     cerr << "Error: file not opened" << endl;
@@ -178,16 +188,30 @@ int decryption() {
   return 1;
 }
 
-int main() {
-  // cout << "- - - - - - - - - - - -       Mã hoá dữ liệu      - - - - - - - - - - - - - -" << endl;
-  // cout << "| * encrypt fileIn fileOut: mã hoá fileIn, lưu kết quả trong fileout        |" << endl;
-  // cout << "|                                                                           |" << endl;
-  // cout << "| * decrypt fileIn fileOut: giải mã fileIn, luư kết quả trong file fileout  |" << endl;
-  // cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" << endl;
+void printTutorial() {
+  cout << "- - - - - - - - - - - - - - - -       Mã hoá dữ liệu      - - - - - - - - - - - - - - -" << endl;
+  cout << "| * ./run.out encrypt fileIn fileOut: mã hoá fileIn, lưu kết quả trong fileout        |" << endl;
+  cout << "|                                                                                     |" << endl;
+  cout << "| * ./run.out decrypt fileIn fileOut: giải mã fileIn, luư kết quả trong file fileout  |" << endl;
+  cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" << endl;
+}
 
-  // Phải viết tham số dòng lệnh thôi
+int main( int argc, char *argv[]) {
+  // int a = decryption();
+	if (argc != 4) {
+    cout << "Sai cú pháp!" << endl;
+    printTutorial();
+  }
 
-  int a = decryption();
+  if (!strcmp(argv[1], "encrypt")) {
+    int result = encryption(argv[2], argv[3]);
+    return result;
+  }
 
-  return 1;
+  if (!strcmp(argv[1], "decrypt")) {
+    int result = decryption(argv[2], argv[3]);
+    return result;
+  }
+	
+	return 0;
 }

@@ -1,1 +1,1 @@
-Assuming bytes are 8 bits, this means that in theory you get one of the following:
+@gabriel_vincent, it's not necessarily bad practice, but it will mean that editing one file in a project of hundreds will cause the compiler to redo all the work for all the files. Compiling separately allows for incremental compilation
