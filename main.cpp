@@ -10,10 +10,8 @@ using namespace std;
 
 const int sizeOfBlock = 12;
 const int sizeOfEncryptedBlock = 16;
-const char* encryptedFile = "encrypt.txt";
-const char* decryptedFile = "decrypt.txt";
 
-char* encryptBlock(char* data, int len) {
+char* encryptBlock(char* data, int len, string hashPass) {
   int lenOfEncr = len + ceil(len / 3.0);
   char* encryptedBlock = new char[lenOfEncr];
   srand(time(NULL));
@@ -47,15 +45,25 @@ char* encryptBlock(char* data, int len) {
   }
 
   //B3: Xor với hash của pashwork
+  for (int i = 0; i < lenOfEncr; i++) {
+    string byte = hashPass.substr(i * 2, 2);
+    char chr = (char) (int)strtol(byte.c_str(), NULL, 16);
+    encryptedBlock[i] ^= chr;
+  }
 
   return encryptedBlock;
 }
 
-char* decryptBlock(char* data, int len) {
+char* decryptBlock(char* data, int len, string hashPass) {
   int lenOfDecry = len - ceil(len / 4.0);
   char* decryptedBlock = new char[lenOfDecry];
 
   // B1: Xor với hash của pashwork
+  for (int i = 0; i < len; i++) {
+    string byte = hashPass.substr(i * 2, 2);
+    char chr = (char) (int)strtol(byte.c_str(), NULL, 16);
+    data[i] ^= chr;
+  }
 
   // B2: Đổi chỗ byte 1 và 3, xoá byte 4
   for (int i = 0; i < len / 4; i++) {
@@ -85,11 +93,13 @@ char* decryptBlock(char* data, int len) {
 }
 
 int encryption(char* fileInName, char* fileOutName) {
-  //Nhâp tên file muốn mã hoá
-  // const size_t BUFFER_SIZE = 1024;
-  // char *inputFileName = new char[BUFFER_SIZE];
-  // cout << "Filename: ";
-  // cin >> inputFileName;
+  //Nhập passWord để mã hoá
+  const size_t BUFFER_SIZE = 1024;
+  char *passWord = new char[BUFFER_SIZE];
+  cout << "Nhập password: ";
+  cin >> passWord;
+  string hashPassWord = md5(passWord);
+
   cout << "File cần mã hoá: " << fileInName << endl;
   cout << "File kết quả: " << fileOutName << endl;
   
@@ -114,7 +124,7 @@ int encryption(char* fileInName, char* fileOutName) {
     char* data = new char [sizeOfBlock];
     if (remainingBytes > sizeOfBlock) {
       fileIn.read(data, sizeOfBlock);
-      char* encryt = encryptBlock(data, sizeOfBlock);
+      char* encryt = encryptBlock(data, sizeOfBlock, hashPassWord);
       fileOut.write(encryt, strlen(encryt));
       remainingBytes -= sizeOfBlock;
       delete [] encryt;
@@ -122,7 +132,7 @@ int encryption(char* fileInName, char* fileOutName) {
     } else {
       char *lastBlock =  new char [remainingBytes];
       fileIn.read(lastBlock, remainingBytes);
-      char* encryt = encryptBlock(lastBlock, remainingBytes);
+      char* encryt = encryptBlock(lastBlock, remainingBytes, hashPassWord);
       fileOut.write(encryt, strlen(encryt));
       delete [] encryt;
       delete [] lastBlock;
@@ -139,11 +149,12 @@ int encryption(char* fileInName, char* fileOutName) {
 }
 
 int decryption(char* fileInName, char* fileOutName) {
-  //Nhâp tên file muốn giải mã
-  // const size_t BUFFER_SIZE = 1024;
-  // char *inputFileName = new char[BUFFER_SIZE];
-  // cout << "Filename: ";
-  // cin >> inputFileName;
+  //Nhập passWord để giải mã
+  const size_t BUFFER_SIZE = 1024;
+  char *passWord = new char[BUFFER_SIZE];
+  cout << "Nhập password: ";
+  cin >> passWord;
+  string hashPassWord = md5(passWord);
 
   cout << "File cần giải mã: " << fileInName << endl;
   cout << "File kết quả: " << fileOutName << endl;
@@ -169,13 +180,13 @@ int decryption(char* fileInName, char* fileOutName) {
     char* data = new char[sizeOfEncryptedBlock];
     if (remainingBytes >= sizeOfEncryptedBlock) {
       fileIn.read(data, sizeOfEncryptedBlock);
-      char* decryt = decryptBlock(data, sizeOfEncryptedBlock);
+      char* decryt = decryptBlock(data, sizeOfEncryptedBlock, hashPassWord);
       fileOut.write(decryt, strlen(decryt));
       remainingBytes -= sizeOfEncryptedBlock;
       delete [] decryt;
     } else {
       fileIn.read(data, remainingBytes);
-      char* decryt = decryptBlock(data, remainingBytes);
+      char* decryt = decryptBlock(data, remainingBytes, hashPassWord);
       fileOut.write(decryt, strlen(decryt));
       delete [] decryt;
 
@@ -198,27 +209,21 @@ void printTutorial() {
   cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" << endl;
 }
 
-// int main( int argc, char *argv[]) {
-// 	if (argc != 4) {
-//     cout << "Sai cú pháp!" << endl;
-//     printTutorial();
-//   }
+int main( int argc, char *argv[]) {
+	if (argc != 4) {
+    cout << "Sai cú pháp!" << endl;
+    printTutorial();
+  }
 
-//   if (!strcmp(argv[1], "encrypt")) {
-//     int result = encryption(argv[2], argv[3]);
-//     return result;
-//   }
+  if (!strcmp(argv[1], "encrypt")) {
+    int result = encryption(argv[2], argv[3]);
+    return result;
+  }
 
-//   if (!strcmp(argv[1], "decrypt")) {
-//     int result = decryption(argv[2], argv[3]);
-//     return result;
-//   }
+  if (!strcmp(argv[1], "decrypt")) {
+    int result = decryption(argv[2], argv[3]);
+    return result;
+  }
 	
-// 	return 0;
-// }
-int main()
-{
-  cout << "md5 of 'grape': " << md5("grape") << endl;
-  cout << sizeof(md5("nguyen buu tuong"))/sizeof(char) <<endl;
-  return 1;
+	return 0;
 }

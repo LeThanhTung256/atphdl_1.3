@@ -1,1 +1,13 @@
-tuong okegug iuyyuiyiuiu huhuh98u9jojoijiji ijkjkj9hn9hb 899ij0[i]
+1. CÁC HỆ THỐNG MÃ HOÁ
+Có hệ thống mã hóa đối xứng và hệ thống mã hóa bất đối xứng.
+Hai loại mã khóa này khác nhau ở số lượng khóa.
+Mã hóa đối xứng sử dụng cùng một khóa để mã hóa/giải mã.
+Trong khi đó, mã hóa bất đối xứng sử dụng hai khóa khác nhau để mã hóa và giải mã thông tin.
+Mỗi hệ thống mã hóa có ưu nhược điểm riêng.
+Mã hóa đối xứng xử lý nhanh nhưng độ an toàn không cao.
+Mã hóa bất đối xứng xử lý chậm hơn, nhưng độ an toàn và tính thuân tiện trong quản lý khóa cao.
+Trong các ứng dụng mã hóa hiện tại, người ta thường kết hợp các ưu điểm của cả hai loại mã hóa này.
+2. ỨNG DỤNG
+Mã hóa có vai trò rất quan trọng, đặc biệt là trong giao dịch điện tử bằng các loại tiền mã hóa như Bitcoin chẳng hạn.
+Nó giúp đảm bảo bí mật, toàn vẹn của thông tin, khi thông tin đó được truyền trên mạng.
+Mã hóa cũng là nền tảng của kĩ thuật chữ ký điện tử, hệ thống PKI...
