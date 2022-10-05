@@ -3,6 +3,8 @@
 #include <math.h>
 #include <cstdlib>
 #include <ctime>
+#include <cstring>
+#include "md5.h"
 
 using namespace std;
 
@@ -196,22 +198,27 @@ void printTutorial() {
   cout << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" << endl;
 }
 
-int main( int argc, char *argv[]) {
-  // int a = decryption();
-	if (argc != 4) {
-    cout << "Sai cú pháp!" << endl;
-    printTutorial();
-  }
+// int main( int argc, char *argv[]) {
+// 	if (argc != 4) {
+//     cout << "Sai cú pháp!" << endl;
+//     printTutorial();
+//   }
 
-  if (!strcmp(argv[1], "encrypt")) {
-    int result = encryption(argv[2], argv[3]);
-    return result;
-  }
+//   if (!strcmp(argv[1], "encrypt")) {
+//     int result = encryption(argv[2], argv[3]);
+//     return result;
+//   }
 
-  if (!strcmp(argv[1], "decrypt")) {
-    int result = decryption(argv[2], argv[3]);
-    return result;
-  }
+//   if (!strcmp(argv[1], "decrypt")) {
+//     int result = decryption(argv[2], argv[3]);
+//     return result;
+//   }
 	
-	return 0;
+// 	return 0;
+// }
+int main()
+{
+  cout << "md5 of 'grape': " << md5("grape") << endl;
+  cout << sizeof(md5("nguyen buu tuong"))/sizeof(char) <<endl;
+  return 1;
 }

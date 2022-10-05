@@ -1,1 +1,1 @@
-@gabriel_vincent, it's not necessarily bad practice, but it will mean that editing one file in a project of hundreds will cause the compiler to redo all the work for all the files. Compiling separately allows for incremental compilation
+tuong okegug iuyyuiyiuiu huhuh98u9jojoijiji ijkjkj9hn9hb 899ij0[i]
