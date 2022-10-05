@@ -1,1 +1,1 @@
-le thanh tung la mot thang ngu
+Assuming bytes are 8 bits, this means that in theory you get one of the following:

@@ -39,10 +39,11 @@ char* encryptBlock(char* data, int len) {
   //nhóm cuối không đủ 3 byte thì giữ nguyên vị trí và thêm rác vào byte cuối cùng
   if (len % 3 != 0) {
     int remain = len % 3;
-    for (int i = 1; i <= remain; i++) {
+    for (int i = remain; i > 0 ; i--) {
       encryptedBlock[lenOfEncr - i - 1] = data[len - i];
     }
-    encryptedBlock[lenOfEncr - 1] = '0';
+    unsigned int trash = rand() % 256;
+    encryptedBlock[lenOfEncr - 1] = char(trash);
   }
 
   //B3: Xor với hash của pashwork
@@ -66,7 +67,7 @@ char* decryptBlock(char* data, int len) {
   // Nếu k đủ 4 byte thì xoá rác và dữ nguyên tất cả
   if (len % 4 != 0) {
     int remain = len % 4;
-    for (int i = 1; i <= remain; i++) {
+    for (int i = remain - 1; i > 0; i--) {
       decryptedBlock[lenOfDecry - i] = data[len - i -1];
     }
   }
@@ -101,20 +102,22 @@ int encryption() {
 
   // Mã hoá và ghi vào file kết quả
   long remainingBytes = sizeOfFile;
-  while(fileIn) {
-    char* data;
-    if (remainingBytes >= sizeOfBlock) {
+  while(!fileIn.eof()) {
+    char* data = new char [sizeOfBlock];
+    if (remainingBytes > sizeOfBlock) {
       fileIn.read(data, sizeOfBlock);
       char* encryt = encryptBlock(data, sizeOfBlock);
-      fileOut.write(data, strlen(data));
+      fileOut.write(encryt, strlen(encryt));
       remainingBytes -= sizeOfBlock;
       delete [] encryt;
+      delete[] data;
     } else {
-      fileIn.read(data, remainingBytes);
-      char* encryt = encryptBlock(data, remainingBytes);
-      cout << data << endl << strlen(data) << endl << remainingBytes;
-      fileOut.write(data, strlen(data));
+      char *lastBlock =  new char [remainingBytes];
+      fileIn.read(lastBlock, remainingBytes);
+      char* encryt = encryptBlock(lastBlock, remainingBytes);
+      fileOut.write(encryt, strlen(encryt));
       delete [] encryt;
+      delete [] lastBlock;
 
       break;
     }
@@ -151,7 +154,7 @@ int decryption() {
   // giải mã và ghi vào file kết quả
   long remainingBytes = sizeOfFile;
   while(fileIn) {
-    char* data;
+    char* data = new char[sizeOfEncryptedBlock];
     if (remainingBytes >= sizeOfEncryptedBlock) {
       fileIn.read(data, sizeOfEncryptedBlock);
       char* decryt = decryptBlock(data, sizeOfEncryptedBlock);
@@ -184,7 +187,7 @@ int main() {
 
   // Phải viết tham số dòng lệnh thôi
 
-  int a = encryption();
+  int a = decryption();
 
   return 1;
 }
